@@ -5,8 +5,12 @@ const {body} = require('express-validator');
 const authMiddleware = require('../middlewares/auth-middleware');
 const albumController = require('../controllers/album-controller');
 
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// const multer  = require('multer')
+// const upload = multer({ dest: 'uploads/' })
 
 router.post(
     '/registration',
