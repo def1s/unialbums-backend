@@ -5,6 +5,7 @@ const mailService = require('../service/mail-service');
 const tokenService = require('../service/token-service');
 const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error');
+const minioClient = require("../configs/minioClient");
 
 // сервис отвечает за логику работы с пользователями, для того, чтобы не загромождать контроллер
 // в паре используется tokenService для управления токенами
@@ -123,16 +124,37 @@ class UserService {
         }
     }
 
-    // TODO удалить этот метод в будущем
-    async getAllUsers() {
-        const users = await UserModel.find();
-        return users;
-    }
-
+    // TODO отправлять не все поля, а только необходимые для инициализации
     async initUser(userId) {
         const user = await UserModel.findById(userId);
         const userDto = new UserDto(user);
         return userDto;
+    }
+
+    async getUserProfile(userId) {
+        const user = await UserModel.findById(userId);
+        const userDto = new UserDto(user);
+        return userDto;
+    }
+
+    async updateUserProfile(userId, firstName, lastName, username, avatar) {
+        const user = await UserModel.findById(userId);
+
+        if (avatar) {
+            const metaData = {
+                'Content-Type': avatar.mimetype
+            };
+
+            const avatarName = uuid.v4();
+            // Загрузка аватарки в MinIO
+            await minioClient.putObject('images', avatarName, avatar.buffer, metaData);
+            user.avatar = `http://localhost:9000/images/${avatarName}`;
+        }
+
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.username = username;
+        user.save();
     }
 }
 

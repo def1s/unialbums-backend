@@ -6,6 +6,7 @@ const UserSchema = new Schema({
     username: {type: String, unique: true, required: true},
     firstName: {type: String},
     lastName: {type: String},
+    avatar: {type: String},
     isActivated: {type: Boolean, default: false},
     activationLink: {type: String}
 });

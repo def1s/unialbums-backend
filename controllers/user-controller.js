@@ -92,15 +92,6 @@ class UserController {
         }
     }
 
-    async getUsers(req, res, next) {
-        try {
-            const users = await userService.getAllUsers();
-            return res.json(users);
-        } catch (e) {
-            next(e);
-        }
-    }
-
     async initUser(req, res, next) {
         try {
             const userTokenData = req.user;
@@ -108,6 +99,31 @@ class UserController {
             return res.json({
                 data: initData
             });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getUserProfile(req, res, next) {
+        try {
+            const userTokenData = req.user;
+            const userData = await userService.getUserProfile(userTokenData.id);
+            return res.json({
+                data: userData
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async updateUserProfile(req, res, next) {
+        try {
+            const userId = req.user.id;
+            const {firstName, lastName, username} = req.body;
+            const avatar = req.file;
+
+            await userService.updateUserProfile(userId, firstName, lastName, username, avatar);
+            return res.json({message: 'Данные успешно обновлены'});
         } catch (e) {
             next(e);
         }

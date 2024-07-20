@@ -1,11 +1,13 @@
 const AlbumModel = require('../models/album-model');
 const minioClient = require('../configs/minioClient');
 const fs = require('fs');
+const uuid = require("uuid");
+const AlbumDto = require('../dtos/album-dto');
 
 class AlbumService {
     async getAlbumsByUserId(userId) {
         const albums = await AlbumModel.find({userId});
-        return albums;
+        return albums.map(album => new AlbumDto(album));
     }
 
     async createAlbum(userId, title, artist, cover) {
@@ -16,9 +18,10 @@ class AlbumService {
                 'Content-Type': cover.mimetype
             };
 
+            const coverName = uuid.v4();
             // Загрузка обложки в MinIO
-            await minioClient.putObject('images', cover.originalname, cover.buffer, metaData);
-            coverUrl = `http://localhost:9000/images/${cover.originalname}`;
+            await minioClient.putObject('images', coverName, cover.buffer, metaData);
+            coverUrl = `http://localhost:9000/images/${coverName}`;
         }
 
         // Сохранение альбома в базу данных
@@ -30,6 +33,11 @@ class AlbumService {
         });
 
         return album;
+    }
+
+    async getAlbumById(albumId) {
+        const album = await AlbumModel.findById(albumId);
+        return new AlbumDto(album);
     }
 }
 

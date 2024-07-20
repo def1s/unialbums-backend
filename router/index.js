@@ -23,10 +23,13 @@ router.post('/loginByUsername', userController.loginByUsername);
 router.post('/logout', userController.logout);
 router.get('/activate/:link', userController.activate);
 router.get('/refresh', userController.refresh);
-router.get('/users', authMiddleware, userController.getUsers);
 router.get('/initUser', authMiddleware, userController.initUser);
 
 router.get('/albums/getByUserId', authMiddleware, albumController.getAlbumsByUserId);
 router.post('/albums/create', authMiddleware, upload.single('cover'), albumController.createAlbum);
+router.get('/albums/:id', authMiddleware, albumController.getAlbumById);
+
+router.get('/users/myProfile', authMiddleware, userController.getUserProfile);
+router.put('/users/myProfile', authMiddleware, upload.single('avatar'), userController.updateUserProfile)
 
 module.exports = router;

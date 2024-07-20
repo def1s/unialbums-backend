@@ -11,10 +11,25 @@ class AlbumController {
         }
     }
 
+    // TODO? сделать, чтобы каждый пользователь мог получить доступ только к своим альбомом
+    async getAlbumById(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const album = await albumService.getAlbumById(albumId);
+            return res.json({data: {...album}});
+        } catch (e) {
+            next(e);
+        }
+    }
+
      async createAlbum(req, res, next) {
         try {
             const userId = req.user.id;
-            const {title, artist} = req.body;
+            const {
+                title,
+                artist
+                // TODO добавить поля для оценок
+            } = req.body;
             const cover = req.file;
 
             await albumService.createAlbum(userId, title, artist, cover);
