@@ -38,6 +38,24 @@ class AlbumController {
             next(e);
         }
      }
+
+     async updateAlbum(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const userId = req.user.id;
+            const {
+                title,
+                artist
+                // TODO добавить поля для оценок
+            } = req.body;
+            const cover = req.file;
+
+            await albumService.updateAlbum(userId, albumId, title, artist, cover);
+            res.json({message: 'Данные успешно обновлены'});
+        } catch (e) {
+            next(e);
+        }
+     }
 }
 
 module.exports = new AlbumController();
