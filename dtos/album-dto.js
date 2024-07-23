@@ -9,6 +9,7 @@ module.exports = class AlbumDto {
     textRating;
     tracksRating;
     atmosphereRating;
+    totalRating;
 
     constructor(model) {
         this.albumId = model._id;
@@ -20,5 +21,6 @@ module.exports = class AlbumDto {
         this.textRating = model.textRating;
         this.tracksRating = model.tracksRating;
         this.atmosphereRating = model.atmosphereRating;
+        this.totalRating = model.totalRating;
     }
 }

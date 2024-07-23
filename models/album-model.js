@@ -8,7 +8,8 @@ const AlbumSchema = new Schema({
     bitsRating: {type: Number},
     textRating: {type: Number},
     tracksRating: {type: Number},
-    atmosphereRating: {type: Number}
+    atmosphereRating: {type: Number},
+    totalRating: {type: Number}
 });
 
 module.exports = model("Album", AlbumSchema);

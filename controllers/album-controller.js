@@ -22,17 +22,53 @@ class AlbumController {
         }
     }
 
+    async getAlbumDescription(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const userId = req.user.id;
+
+            const albumDescription = await albumService.getAlbumDescription(albumId, userId);
+            return res.json({data: albumDescription});
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getAlbumRating(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const userId = req.user.id;
+
+            const albumRating = await albumService.getAlbumRating(albumId, userId);
+            return res.json({data: albumRating});
+        } catch (e) {
+            next(e);
+        }
+    }
+
      async createAlbum(req, res, next) {
         try {
             const userId = req.user.id;
             const {
                 title,
-                artist
-                // TODO добавить поля для оценок
+                artist,
+                bitsRating,
+                textRating,
+                tracksRating,
+                atmosphereRating
             } = req.body;
             const cover = req.file;
 
-            await albumService.createAlbum(userId, title, artist, cover);
+            await albumService.createAlbum(
+                userId,
+                title,
+                artist,
+                cover,
+                bitsRating,
+                textRating,
+                tracksRating,
+                atmosphereRating
+            );
             return res.json({message: 'Альбом создан'});
         } catch (e) {
             next(e);

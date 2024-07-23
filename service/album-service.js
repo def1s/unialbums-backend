@@ -11,7 +11,7 @@ class AlbumService {
         return albums.map(album => new AlbumDto(album));
     }
 
-    async createAlbum(userId, title, artist, cover) {
+    async createAlbum(userId, title, artist, cover, bitsRating, textRating, tracksRating, atmosphereRating) {
         let coverUrl = null;
 
         // TODO вынести в отдельную функцию добавление картинки в minio
@@ -25,12 +25,20 @@ class AlbumService {
             await minioClient.putObject('images', coverName, cover.buffer, metaData);
             coverUrl = `http://localhost:9000/images/${coverName}`;
         }
+        // TODO сделать в будущем кастомизируемые критерии оценки
+        const multiplier = 8/3;
+        const totalRating = Math.floor(+tracksRating * multiplier * 2 + +atmosphereRating * multiplier + +bitsRating + +textRating);
 
         // Сохранение альбома в базу данных
         const album = await AlbumModel.create({
             userId,
             title,
             artist,
+            bitsRating,
+            textRating,
+            tracksRating,
+            atmosphereRating,
+            totalRating,
             cover: coverUrl
         });
 
@@ -40,6 +48,30 @@ class AlbumService {
     async getAlbumById(albumId) {
         const album = await AlbumModel.findById(albumId);
         return new AlbumDto(album);
+    }
+
+    async getAlbumDescription(albumId, userId) {
+        const album = await AlbumModel.findById(albumId);
+
+        return {
+            isEditable: userId === album.userId,
+            title: album.title,
+            artist: album.artist,
+            cover: album.cover
+        }
+    }
+
+    async getAlbumRating(albumId, userId) {
+        const album = await AlbumModel.findById(albumId);
+
+        return {
+            isEditable: userId === album.userId,
+            bitsRating: album.bitsRating,
+            textRating: album.textRating,
+            tracksRating: album.tracksRating,
+            atmosphereRating: album.atmosphereRating,
+            totalRating: album.totalRating
+        }
     }
 
     async updateAlbum(userId, albumId, title, artist, cover) {

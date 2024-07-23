@@ -31,6 +31,8 @@ router.get('/albums/getByUserId', authMiddleware, albumController.getAlbumsByUse
 router.post('/albums/create', authMiddleware, upload.single('cover'), albumController.createAlbum);
 router.get('/albums/:id', authMiddleware, albumController.getAlbumById);
 router.put('/albums/:id', authMiddleware, upload.single('cover'), albumController.updateAlbum);
+router.get('/albums/description/:id', authMiddleware, albumController.getAlbumDescription);
+router.get('/albums/rating/:id', authMiddleware, albumController.getAlbumRating);
 
 router.get('/users/myProfile', authMiddleware, userController.getUserProfile);
 router.put('/users/myProfile', authMiddleware, upload.single('avatar'), userController.updateUserProfile);

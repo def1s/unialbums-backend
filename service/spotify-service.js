@@ -17,7 +17,7 @@ class SpotifyService {
     async searchAlbums(title) {
         const token = await SpotifyService.getToken();
 
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${title}&type=album`, {
+        const response = await fetch(`https://api.spotify.com/v1/search?q=${title}&type=album&limit=10`, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token.access_token },
         }).then(res => res.json());
@@ -26,11 +26,11 @@ class SpotifyService {
         // вытаскиваю только нужные мне поля
         return response.albums.items.map(album => {
             const artists = album.artists.map(artist => artist.name);
-            const name = album.name;
-            const image300x300 = album.images.find(image => image.width === 300 && image.height === 300)?.url;
+            const title = album.name;
+            const image64x64 = album.images.find(image => image.width === 64 && image.height === 64)?.url;
             const id = album.id;
 
-            return { id, artists, name, cover: image300x300 };
+            return { id, artists, title, cover: image64x64 };
         });
     }
 
@@ -45,7 +45,7 @@ class SpotifyService {
         // TODO вынести в dto (взять от предыдущего)
         return {
             id: response.id,
-            name: response.name,
+            title: response.name,
             artists: response.artists.map(artist => artist.name),
             cover: response.images.find(image => image.width === 640 && image.height === 640)?.url
         }
