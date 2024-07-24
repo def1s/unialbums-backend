@@ -11,7 +11,7 @@ class AlbumController {
         }
     }
 
-    // TODO? сделать, чтобы каждый пользователь мог получить доступ только к своим альбомом
+    // TODO? сделать условие видимость для альбома (приватный/публичный)
     async getAlbumById(req, res, next) {
         try {
             const albumId = req.params.id;
@@ -46,6 +46,31 @@ class AlbumController {
         }
     }
 
+    async updateAlbumRating(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const {
+                textRating,
+                tracksRating,
+                atmosphereRating,
+                bitsRating
+            } = req.body;
+
+            const totalRating = await albumService.updateAlbumRating(
+                albumId,
+                textRating,
+                tracksRating,
+                atmosphereRating,
+                bitsRating
+            );
+
+            // TODO отправлять обратно обновленные данные рейтинга
+            return res.json({data: totalRating, message: 'Рейтинг успешно обновлен'});
+        } catch (e) {
+            next(e);
+        }
+    }
+
      async createAlbum(req, res, next) {
         try {
             const userId = req.user.id;
@@ -75,7 +100,7 @@ class AlbumController {
         }
      }
 
-     async updateAlbum(req, res, next) {
+     async updateAlbumDescription(req, res, next) {
         try {
             const albumId = req.params.id;
             const userId = req.user.id;
@@ -86,8 +111,20 @@ class AlbumController {
             } = req.body;
             const cover = req.file;
 
-            await albumService.updateAlbum(userId, albumId, title, artist, cover);
-            res.json({message: 'Данные успешно обновлены'});
+            await albumService.updateAlbumDescription(userId, albumId, title, artist, cover);
+            return res.json({message: 'Данные успешно обновлены'});
+        } catch (e) {
+            next(e);
+        }
+     }
+
+     async deleteAlbum(req, res, next) {
+        try {
+            const albumId = req.params.id;
+            const userId = req.user.id;
+
+            await albumService.deleteAlbum(userId, albumId);
+            return res.json({message: 'Альбом успешно удален'});
         } catch (e) {
             next(e);
         }

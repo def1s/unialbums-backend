@@ -26,6 +26,7 @@ class AlbumService {
             coverUrl = `http://localhost:9000/images/${coverName}`;
         }
         // TODO сделать в будущем кастомизируемые критерии оценки
+        // TODO вынести в отдельную функцию
         const multiplier = 8/3;
         const totalRating = Math.floor(+tracksRating * multiplier * 2 + +atmosphereRating * multiplier + +bitsRating + +textRating);
 
@@ -74,12 +75,31 @@ class AlbumService {
         }
     }
 
-    async updateAlbum(userId, albumId, title, artist, cover) {
+    async updateAlbumRating(albumId, textRating, tracksRating, atmosphereRating, bitsRating) {
         const album = await AlbumModel.findById(albumId);
+        album.textRating = textRating;
+        album.tracksRating = tracksRating;
+        album.atmosphereRating = atmosphereRating;
+        album.bitsRating = bitsRating;
 
-        if (album.userId + '' !== userId) {
-            throw ApiError.BadRequest('Доступ к редактированию альбома запрещен');
-        }
+        // TODO вынести в отдельную функцию
+        const multiplier = 8/3;
+        const totalRating = Math.floor(+tracksRating * multiplier * 2 + +atmosphereRating * multiplier + +bitsRating + +textRating);
+
+        album.totalRating = totalRating;
+        album.save();
+
+        return {
+            textRating,
+            tracksRating,
+            atmosphereRating,
+            bitsRating,
+            totalRating
+        };
+    }
+
+    async updateAlbumDescription(userId, albumId, title, artist, cover) {
+        const album = await AlbumModel.findById(albumId);
 
         album.title = title;
         album.artist = artist;
@@ -97,6 +117,15 @@ class AlbumService {
         }
 
         album.save();
+    }
+
+    async deleteAlbum(userId, albumId) {
+        const album = await AlbumModel.findById(albumId);
+        if (album.userId !== userId) {
+            ApiError.AccessDenied();
+        }
+
+        await AlbumModel.findByIdAndDelete(albumId);
     }
 }
 
