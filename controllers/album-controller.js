@@ -64,7 +64,6 @@ class AlbumController {
                 bitsRating
             );
 
-            // TODO отправлять обратно обновленные данные рейтинга
             return res.json({data: totalRating, message: 'Рейтинг успешно обновлен'});
         } catch (e) {
             next(e);
@@ -107,7 +106,6 @@ class AlbumController {
             const {
                 title,
                 artist
-                // TODO добавить поля для оценок
             } = req.body;
             const cover = req.file;
 

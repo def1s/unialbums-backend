@@ -5,6 +5,8 @@ const uuid = require("uuid");
 const AlbumDto = require('../dtos/album-dto');
 const ApiError = require('../exceptions/api-error');
 
+const API_URL = process.env.API_URL || 'http://localhost:9000';
+
 class AlbumService {
     async getAlbumsByUserId(userId) {
         const albums = await AlbumModel.find({userId});
@@ -23,7 +25,7 @@ class AlbumService {
             const coverName = uuid.v4();
             // Загрузка обложки в MinIO
             await minioClient.putObject('images', coverName, cover.buffer, metaData);
-            coverUrl = `http://localhost:9000/images/${coverName}`;
+            coverUrl = `http://${API_URL}/images/${coverName}`;
         }
         // TODO сделать в будущем кастомизируемые критерии оценки
         // TODO вынести в отдельную функцию
@@ -113,7 +115,7 @@ class AlbumService {
             const coverName = uuid.v4();
             // Загрузка обложки в MinIO
             await minioClient.putObject('images', coverName, cover.buffer, metaData);
-            album.cover = `http://localhost:9000/images/${coverName}`;
+            album.cover = `http://${API_URL}/images/${coverName}`;
         }
 
         album.save();
