@@ -37,10 +37,14 @@ class SpotifyService {
     async getAlbum(albumId) {
         const token = await SpotifyService.getToken();
 
+        console.log(token);
+
         const response = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token.access_token },
         }).then(res => res.json());
+
+        console.log(response);
 
         // TODO вынести в dto (взять от предыдущего)
         return {

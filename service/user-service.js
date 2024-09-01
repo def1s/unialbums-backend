@@ -7,6 +7,8 @@ const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error');
 const minioClient = require("../configs/minioClient");
 
+const MINIO_URL = process.env.MINIO_URL || 'http://localhost:9000';
+
 // сервис отвечает за логику работы с пользователями, для того, чтобы не загромождать контроллер
 // в паре используется tokenService для управления токенами
 class UserService {
@@ -148,7 +150,7 @@ class UserService {
             const avatarName = uuid.v4();
             // Загрузка аватарки в MinIO
             await minioClient.putObject('images', avatarName, avatar.buffer, metaData);
-            user.avatar = `http://localhost:9000/images/${avatarName}`;
+            user.avatar = `${MINIO_URL}/images/${avatarName}`;
         }
 
         user.firstName = firstName;
