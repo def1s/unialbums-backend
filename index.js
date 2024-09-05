@@ -29,6 +29,7 @@ const start = async () => {
         if (process.env.MODE === 'production') {
             // В продакшн используем HTTPS
             const options = {
+                // TODO вынести в env
                 key: fs.readFileSync('/etc/letsencrypt/live/unialbums.ru/privkey.pem'),
                 cert: fs.readFileSync('/etc/letsencrypt/live/unialbums.ru/fullchain.pem')
             };
